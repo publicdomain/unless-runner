@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace UnlessRunner
@@ -44,10 +45,17 @@ namespace UnlessRunner
                     // Validate it's an executable file
                     if (Path.GetExtension(programFilePath) == ".exe")
                     {
-                        // Add to programs list
-                        this.programsListBox.Items.Add(programFilePath);
+                        // Avoid duplicates
+                        if (!this.programsListBox.Items.Contains(programFilePath))
+                        {
+                            // Add to programs list
+                            this.programsListBox.Items.Add(programFilePath);
+                        }
                     }
                 }
+
+                // Update item count
+                this.itemsToolStripStatusLabel.Text = this.programsListBox.Items.Count.ToString();
             }
         }
 
@@ -98,7 +106,33 @@ namespace UnlessRunner
         /// <param name="e">Event arguments.</param>
         private void OnSaveToolStripMenuItemClick(object sender, EventArgs e)
         {
-            // TODO Add code 
+            // Check there's something to save
+            if (this.programsListBox.Items.Count == 0)
+            {
+                // Inform user
+                MessageBox.Show($"Nothing to save.", "Empty list", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                // Halt flow
+                return;
+            }
+
+            // Empty file name
+            this.textFileSaveFileDialog.FileName = string.Empty;
+
+            // Open save file dialog
+            if (this.textFileSaveFileDialog.ShowDialog() == DialogResult.OK && this.textFileSaveFileDialog.FileName.Length > 0)
+            {
+                try
+                {
+                    // Save lines to disk
+                    File.WriteAllLines(this.textFileSaveFileDialog.FileName, this.programsListBox.Items.Cast<string>().ToArray());
+                }
+                catch (Exception exception)
+                {
+                    // Inform user
+                    MessageBox.Show($"Error when saving to \"{Path.GetFileName(this.textFileSaveFileDialog.FileName)}\":{Environment.NewLine}{exception.Message}", "Save file error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
         /// <summary>
