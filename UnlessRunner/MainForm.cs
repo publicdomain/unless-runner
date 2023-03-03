@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace UnlessRunner
@@ -31,7 +32,23 @@ namespace UnlessRunner
         /// <param name="e">Event arguments.</param>
         private void OnBrowseButtonClick(object sender, EventArgs e)
         {
-            // TODO Add code
+            // Reset file name
+            this.programOpenFileDialog.FileName = string.Empty;
+
+            // Show open file dialog
+            if (this.programOpenFileDialog.ShowDialog() == DialogResult.OK && this.programOpenFileDialog.FileNames.Length > 0)
+            {
+                // Iterate program files
+                foreach (var programFilePath in this.programOpenFileDialog.FileNames)
+                {
+                    // Validate it's an executable file
+                    if (Path.GetExtension(programFilePath) == ".exe")
+                    {
+                        // Add to programs list
+                        this.programsListBox.Items.Add(programFilePath);
+                    }
+                }
+            }
         }
 
         /// <summary>

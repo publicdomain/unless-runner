@@ -211,7 +211,7 @@ namespace UnlessRunner
         	this.itemsToolStripStatusLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         	this.itemsToolStripStatusLabel.Name = "itemsToolStripStatusLabel";
         	this.itemsToolStripStatusLabel.Size = new System.Drawing.Size(14, 17);
-        	this.itemsToolStripStatusLabel.Text = "0";
+        	this.itemsToolStripStatusLabel.Text = "5";
         	// 
         	// textFileOpenFileDialog
         	// 
@@ -226,7 +226,7 @@ namespace UnlessRunner
         	// programOpenFileDialog
         	// 
         	this.programOpenFileDialog.DefaultExt = "exe";
-        	this.programOpenFileDialog.Filter = "EXE Files|*.exe|All files (*.*)|*.*";
+        	this.programOpenFileDialog.Filter = "EXE Files|*.exe";
         	this.programOpenFileDialog.Multiselect = true;
         	// 
         	// removeButton
@@ -281,6 +281,7 @@ namespace UnlessRunner
         	this.programsListBox.ItemHeight = 16;
         	this.programsListBox.Location = new System.Drawing.Point(3, 63);
         	this.programsListBox.Name = "programsListBox";
+        	this.programsListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
         	this.programsListBox.Size = new System.Drawing.Size(278, 210);
         	this.programsListBox.Sorted = true;
         	this.programsListBox.TabIndex = 3;
