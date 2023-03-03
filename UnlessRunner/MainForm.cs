@@ -43,7 +43,7 @@ namespace UnlessRunner
                 foreach (var programFilePath in this.programOpenFileDialog.FileNames)
                 {
                     // Validate it's an executable file
-                    if (Path.GetExtension(programFilePath) == ".exe")
+                    if (Path.GetExtension(programFilePath).ToLowerInvariant() == ".exe")
                     {
                         // Avoid duplicates
                         if (!this.programsListBox.Items.Contains(programFilePath))
@@ -96,7 +96,38 @@ namespace UnlessRunner
         /// <param name="e">Event arguments.</param>
         private void OnOpenToolStripMenuItemClick(object sender, EventArgs e)
         {
-            // TODO Add code
+            // Reset file name
+            this.textFileOpenFileDialog.FileName = string.Empty;
+
+            // Show open file dialog
+            if (this.textFileOpenFileDialog.ShowDialog() == DialogResult.OK && this.textFileOpenFileDialog.FileNames.Length > 0)
+            {
+                // Iterate text files
+                foreach (var textFilePath in this.textFileOpenFileDialog.FileNames)
+                {
+                    // Iterate lines
+                    foreach (var exePath in File.ReadAllLines(textFilePath))
+                    {
+                        // Validate it's an executable file
+                        if (Path.GetExtension(exePath).ToLowerInvariant() == ".exe")
+                        {
+                            // Verify it's present
+                            if (File.Exists(exePath))
+                            {
+                                // Avoid duplicates
+                                if (!this.programsListBox.Items.Contains(exePath))
+                                {
+                                    // Add to programs list
+                                    this.programsListBox.Items.Add(exePath);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Update item count
+                this.itemsToolStripStatusLabel.Text = this.programsListBox.Items.Count.ToString();
+            }
         }
 
         /// <summary>
