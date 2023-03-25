@@ -5,10 +5,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
+using System.Management;
 
 namespace UnlessRunner
 {
@@ -17,6 +21,21 @@ namespace UnlessRunner
     /// </summary>
     public partial class MainForm : Form
     {
+        /// <summary>
+        /// The process exclusion list.
+        /// </summary>
+        private List<string> processExclusionList = new List<string>() { "conhost", "dwm", "explorer", "rundll32", "taskhost" };
+
+        /// <summary>
+        /// Queries the full name of the process image.
+        /// </summary>
+        /// <returns><c>true</c>, if full process image name was queryed, <c>false</c> otherwise.</returns>
+        /// <param name="hprocess">Hprocess.</param>
+        /// <param name="dwFlags">Dw flags.</param>
+        /// <param name="lpExeName">Lp exe name.</param>
+        /// <param name="size">Size.</param>
+        [DllImport("kernel32.dll")] public static extern bool QueryFullProcessImageName(IntPtr hprocess, int dwFlags, StringBuilder lpExeName, out int size);
+
         /// <summary>
         /// Initializes a new instance of the <see cref="T:UnlessRunner.MainForm"/> class.
         /// </summary>
@@ -66,7 +85,80 @@ namespace UnlessRunner
         /// <param name="e">Event arguments.</param>
         private void OnLaunchButtonClick(object sender, EventArgs e)
         {
-            // TODO Add code
+            // Check there's something to work with
+            if (this.programsListBox.Items.Count == 0)
+            {
+                // Halt flow
+                return;
+            }
+
+            /* Process list (System.Diagnostics.Process) */
+
+            // Declare running list
+            List<string> runningList = new List<string>();
+
+            // TODO List processes for current user [Can be improved]
+            foreach (var process in Process.GetProcesses())
+            {
+                try
+                {
+                    // Test against excluson list
+                    if (!this.processExclusionList.Contains(process.ProcessName))
+                    {
+                        // Add lowercased
+                        runningList.Add(Path.GetFileName(process.ProcessName.ToLowerInvariant()));
+                    }
+                }
+                catch
+                {
+                    // Get by API
+                    try
+                    {
+                        // Set string builder
+                        StringBuilder fullProcessPathStringBuilder = new StringBuilder(1024);
+
+                        // Set buffer length
+                        int bufferLength = (int)fullProcessPathStringBuilder.Capacity + 1;
+
+                        // Get process path by full image name
+                        QueryFullProcessImageName(process.Handle, 0, fullProcessPathStringBuilder, out bufferLength);
+
+                        // Check for success
+                        if (fullProcessPathStringBuilder.ToString().Length > 0)
+                        {
+                            // Add lowercased
+                            runningList.Add(Path.GetFileNameWithoutExtension(fullProcessPathStringBuilder.ToString().ToLowerInvariant()));
+                        }
+                    }
+                    catch
+                    {
+                        ; // Let it fall through
+                    }
+                }
+            }
+
+            /* Programs list (By user) */
+
+            // Get current programs list into a regular list
+            List<string> programsList = this.programsListBox.Items.OfType<string>().ToList();
+
+            // Iterate in reverse
+            for (int i = programsList.Count - 1; i >= 0; i--)
+            {
+                // Check if it's running
+                if (runningList.Contains(Path.GetFileNameWithoutExtension(programsList[i]).ToLowerInvariant()))
+                {
+                    // Remove from list
+                    programsList.RemoveAt(i);
+                }
+            }
+
+            // Start non-running processes
+            foreach (var programPath in programsList)
+            {
+                // Start
+                Process.Start(programPath);
+            }
         }
 
         /// <summary>
@@ -86,7 +178,7 @@ namespace UnlessRunner
         /// <param name="e">Event arguments.</param>
         private void OnNewToolStripMenuItemClick(object sender, EventArgs e)
         {
-            // TODO Add code 
+            // TODO Add codes
         }
 
         /// <summary>
