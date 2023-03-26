@@ -168,7 +168,12 @@ namespace UnlessRunner
         /// <param name="e">Event arguments.</param>
         private void OnProgramsListBoxPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            // TODO Add code
+            // Check for delete key
+            if (e.KeyCode == Keys.Delete)
+            {
+                // Remove selected
+                this.removeButton.PerformClick();
+            }
         }
 
         /// <summary>
