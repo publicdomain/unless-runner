@@ -337,11 +337,11 @@ namespace UnlessRunner
         }
 
         /// <summary>
-        /// Handles the exit tool strip menu item1 click.
+        /// Handles the exit tool strip menu item click.
         /// </summary>
         /// <param name="sender">Sender object.</param>
         /// <param name="e">Event arguments.</param>
-        private void OnExitToolStripMenuItem1Click(object sender, EventArgs e)
+        private void OnExitToolStripMenuItemClick(object sender, EventArgs e)
         {
             // Close program
             this.Close();
