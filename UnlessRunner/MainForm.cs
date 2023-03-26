@@ -318,7 +318,22 @@ namespace UnlessRunner
         /// <param name="e">Event arguments.</param>
         private void OnRemoveButtonClick(object sender, EventArgs e)
         {
-            // TODO Add code
+            // Pause painting
+            this.programsListBox.BeginUpdate();
+
+            // Iterate in reverse
+            for (int i = this.programsListBox.Items.Count - 1; i >= 0; i--)
+            {
+                // Check if it's selected
+                if (this.programsListBox.SelectedIndices.Contains(i))
+                {
+                    // Remove the item
+                    this.programsListBox.Items.RemoveAt(i);
+                }
+            }
+
+            // Resume painting
+            this.programsListBox.EndUpdate();
         }
 
         /// <summary>
