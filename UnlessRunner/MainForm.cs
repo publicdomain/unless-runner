@@ -85,6 +85,9 @@ namespace UnlessRunner
 
             // Add items to listbox
             this.programsListBox.Items.AddRange(this.settingsData.ProgramsList.ToArray());
+
+            // Update item count
+            this.itemsToolStripStatusLabel.Text = this.programsListBox.Items.Count.ToString();
         }
 
         /// <summary>
@@ -225,7 +228,11 @@ namespace UnlessRunner
         /// <param name="e">Event arguments.</param>
         private void OnNewToolStripMenuItemClick(object sender, EventArgs e)
         {
-            // TODO Add codes
+            // Clear listbox items
+            this.programsListBox.Items.Clear();
+
+            // Update item count
+            this.itemsToolStripStatusLabel.Text = this.programsListBox.Items.Count.ToString();
         }
 
         /// <summary>
@@ -388,6 +395,9 @@ namespace UnlessRunner
 
             // Resume painting
             this.programsListBox.EndUpdate();
+
+            // Update item count
+            this.itemsToolStripStatusLabel.Text = this.programsListBox.Items.Count.ToString();
         }
 
         /// <summary>
