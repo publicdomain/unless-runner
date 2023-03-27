@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using System.Management;
 using PublicDomain;
 using System.Xml.Serialization;
+using System.Reflection;
 
 namespace UnlessRunner
 {
@@ -61,6 +62,29 @@ namespace UnlessRunner
         {
             // The InitializeComponent() call is required for Windows Forms designer support.
             this.InitializeComponent();
+
+            /* Set icons */
+
+            // Set associated icon from exe file
+            this.associatedIcon = Icon.ExtractAssociatedIcon(typeof(MainForm).GetTypeInfo().Assembly.Location);
+
+            // Set PublicDomain.is tool strip menu item image
+            this.freeReleasesPublicDomainisToolStripMenuItem.Image = this.associatedIcon.ToBitmap();
+
+            /* Settings data */
+
+            // Check for settings file
+            if (!File.Exists(this.settingsDataPath))
+            {
+                // Create new settings file
+                this.SaveSettingsFile(this.settingsDataPath, new SettingsData());
+            }
+
+            // Load settings from disk
+            this.settingsData = this.LoadSettingsFile(this.settingsDataPath);
+
+            // Add items to listbox
+            this.programsListBox.Items.AddRange(this.settingsData.ProgramsList.ToArray());
         }
 
         /// <summary>
@@ -331,7 +355,14 @@ namespace UnlessRunner
         /// <param name="e">Event arguments.</param>
         private void OnMainFormFormClosing(object sender, FormClosingEventArgs e)
         {
-            // TODO Add code
+            // Clear afresh
+            this.settingsData.ProgramsList.Clear();
+
+            // Add items into settings data list 
+            this.settingsData.ProgramsList.AddRange(this.programsListBox.Items.Cast<string>());
+
+            // Save settings data to disk
+            this.SaveSettingsFile(this.settingsDataPath, this.settingsData);
         }
 
         /// <summary>
