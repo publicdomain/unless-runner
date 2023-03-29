@@ -30,7 +30,7 @@ Day #87, Week #13 @ March 28, 2023
 * Max P.
 * Kathryn S.
 * Cranioscopical
-- Tomos
+* Tomos
 * Will *you* be our next supporter? :)
 
 ## 💗 Support:
